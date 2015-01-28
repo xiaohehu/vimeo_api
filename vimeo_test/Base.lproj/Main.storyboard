@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -17,27 +16,71 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d6e-Pf-8xG">
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="rAC-G1-mdo">
+                                <rect key="frame" x="0.0" y="76" width="600" height="447"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Owh-KR-T1c">
+                                    <size key="itemSize" width="144" height="86"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="theCell" id="4Fq-Tg-Y6o">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="295" height="166"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <size key="customSize" width="295" height="166"/>
+                                    </collectionViewCell>
+                                </cells>
+                                <connections>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="fXW-b2-Z87"/>
+                                </connections>
+                            </collectionView>
+                            <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ptI-hL-CwV">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <connections>
-                                    <outlet property="delegate" destination="BYZ-38-t0r" id="eEg-DS-C1S"/>
-                                </connections>
                             </webView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="d6e-Pf-8xG" secondAttribute="trailing" id="8dj-Df-N4g"/>
-                            <constraint firstItem="d6e-Pf-8xG" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" id="CZg-GT-3UV"/>
-                            <constraint firstItem="d6e-Pf-8xG" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="KrD-4s-n43"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="d6e-Pf-8xG" secondAttribute="bottom" id="vxH-c0-nNJ"/>
+                            <constraint firstAttribute="trailing" secondItem="rAC-G1-mdo" secondAttribute="trailing" id="2Gj-FK-sGv"/>
+                            <constraint firstItem="ptI-hL-CwV" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="33Z-m7-0PW"/>
+                            <constraint firstAttribute="trailing" secondItem="ptI-hL-CwV" secondAttribute="trailing" id="4h9-Qm-3Ai"/>
+                            <constraint firstItem="ptI-hL-CwV" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="Afx-xE-e8V"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="rAC-G1-mdo" secondAttribute="bottom" constant="77" id="Y8i-Da-oTX"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="ptI-hL-CwV" secondAttribute="bottom" id="gfm-e1-vFd"/>
+                            <constraint firstItem="rAC-G1-mdo" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="kPw-61-2u9"/>
+                            <constraint firstItem="rAC-G1-mdo" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="56" id="sK5-vQ-G3z"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="webview" destination="d6e-Pf-8xG" id="UaF-t7-773"/>
+                        <outlet property="theCollectionView" destination="rAC-G1-mdo" id="KR8-UN-hgn"/>
+                        <outlet property="webview" destination="ptI-hL-CwV" id="K1v-Yd-SeE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+        <!--Xh Web View Controller-->
+        <scene sceneID="81U-sR-0MT">
+            <objects>
+                <viewController restorationIdentifier="xhWebViewController" storyboardIdentifier="xhWebViewController" id="WQt-YO-Tjj" customClass="xhWebViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="g0p-vr-WJr"/>
+                        <viewControllerLayoutGuide type="bottom" id="Tjo-sC-hYk"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="mwZ-86-zlM">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xOI-J0-NXW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
         </scene>
     </scenes>

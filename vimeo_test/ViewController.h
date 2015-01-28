@@ -7,20 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "OAConsumer.h"
-#import "OAToken.h"
-#import "OAMutableURLRequest.h"
-#import "OADataFetcher.h"
+#import "SBJsonParser.h"
 
-@interface ViewController : UIViewController<UIWebViewDelegate>
+@interface ViewController : UIViewController
 {
-    IBOutlet UIWebView *webview;
-    OAConsumer* consumer;
-    OAToken* requestToken;
-    OAToken* accessToken;
 }
 
-@property (nonatomic, retain) IBOutlet UIWebView *webview;
 
 @end
 

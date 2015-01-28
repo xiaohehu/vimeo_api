@@ -7,205 +7,173 @@
 //
 
 #import "ViewController.h"
+#import "xhWebViewController.h"
 
-@interface ViewController ()
+@interface ViewController ()<UICollectionViewDelegate, UICollectionViewDataSource, UIWebViewDelegate>
 {
-    NSString *secrete;
+    NSMutableArray      *arr_rawData;
+    int                 totalVideo;
+    int                 pageNum;
+    NSString            *video_src;
+    __weak IBOutlet UIWebView *webview;
+    __weak IBOutlet UICollectionView *theCollectionView;
 }
 @end
 
-NSString *clientID;
-NSString *Secret;
-NSString *callback;
-
 @implementation ViewController
 
-@synthesize webview;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    clientID = @"0ac70ad344540ad2b340e85108ca1c87f1ebfc32";
-    Secret = @"527e23916119d5b416a8ed967f04b5ddd2fe73df";
-    callback  = @"vimeo://authorized";
+    arr_rawData = [[NSMutableArray alloc] init];
+    webview.delegate = self;
+    webview.hidden = YES;
     
-    //[self connectTumblr];
-    
-    
-    
-    // call the authorize URL (https://api.vimeo.com/oauth/authorize)
     [self authorizeVimeo];
     
-    
-    
-    
-    
+    theCollectionView.delegate = self;
+    theCollectionView.dataSource = self;
+    [theCollectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"theCell"];
+    [theCollectionView reloadData];
 }
-
 
 - (void)authorizeVimeo{
     NSLog(@"AUTHORIZE %@",@"authorized");
     
-    //NSString* httpBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    //requestToken = [[OAToken alloc] initWithHTTPResponseBody:httpBody];
-    //NSURL* authorizeUrl = [NSURL URLWithString:@"https://vimeo.com/oauth/authorize"];
     
+    // set the URL
+    NSURL *url = [NSURL URLWithString:@"https://api.vimeo.com/me/videos"];
     
-    NSURL *theURL = [NSURL URLWithString:@"https://vimeo.com/oauth/authorize?response_type=code&client_id=0ac70ad344540ad2b340e85108ca1c87f1ebfc32&secret=527e23916119d5b416a8ed967f04b5ddd2fe73dfredirect_uri=vimeo://authorized&scope=public"];
-    NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:theURL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:10.0f];
-    [theRequest setHTTPMethod:@"POST"];
+    //set up the request to be sent
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [request setURL:url];
+    [request setHTTPMethod:@"GET"];
+    [request setValue:@"bearer 6bdf3f21e6319a1e2e55b35dac8654f5" forHTTPHeaderField:@"Authorization"];
+//    [request setTimeoutInterval:30];
     
-    //NSLog(@"RESPONSE: %@",theRequest);
+    // turn on the network indicator
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
-    //NSString* jsonString = [[NSString alloc] initWithContentsOfFile:theRequest encoding:NSUTF8StringEncoding error:nil];
-    
-    NSURLResponse *theResponse = NULL;
-    NSError *theError = NULL;
-    NSData *theResponseData = [NSURLConnection sendSynchronousRequest:theRequest returningResponse:&theResponse error:&theError];
-    NSString *theResponseString = [[NSString alloc] initWithData:theResponseData encoding:NSUTF8StringEncoding];
-    
-    NSLog(@"RESPONSE: %@",theResponseString);
-    
-    //[theRequest setValue:@"application/json-rpc" forHTTPHeaderField:@"Content-Type"];
-    ////NSString *theBodyString = [[CJSONSerializer serializer] serializeDictionary:theRequestDictionary];
-    //NSLog(@"%@", theBodyString);
-    //NSData *theBodyData = [theBodyString dataUsingEncoding:NSUTF8StringEncoding];
-    
-}
-
-
-
-
--(void)connectTumblr {
-    
-    consumer = [[OAConsumer alloc] initWithKey:clientID secret:Secret];
-    
-    
-    NSURL* requestTokenUrl = [NSURL URLWithString:@"https://vimeo.com/oauth/request_token"];
-    
-    OAMutableURLRequest* requestTokenRequest = [[OAMutableURLRequest alloc] initWithURL:requestTokenUrl
-                                                                                consumer:consumer
-                                                                                token:nil
-                                                                                realm:callback
-                                                                      signatureProvider:nil] ;
-    
-    OARequestParameter* callbackParam = [[OARequestParameter alloc] initWithName:@"oauth_callback" value:callback] ;
-    [requestTokenRequest setHTTPMethod:@"POST"];
-    [requestTokenRequest setParameters:[NSArray arrayWithObject:callbackParam]];
-    OADataFetcher* dataFetcher = [[OADataFetcher alloc] init] ;
-    [dataFetcher fetchDataWithRequest:requestTokenRequest
-                             delegate:self
-                            didFinishSelector:@selector(didReceiveRequestToken:data:)
-                            didFailSelector:@selector(didFailOAuth:error:)];
-    
-}
-
-- (void)didReceiveRequestToken:(OAServiceTicket*)ticket data:(NSData*)data {
-    NSString* httpBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    requestToken = [[OAToken alloc] initWithHTTPResponseBody:httpBody];
-    NSURL* authorizeUrl = [NSURL URLWithString:@"https://vimeo.com/oauth/authorize"];
-    OAMutableURLRequest* authorizeRequest = [[OAMutableURLRequest alloc] initWithURL:authorizeUrl
-                                                                            consumer:nil
-                                                                               token:nil
-                                                                               realm:nil
-                                                                   signatureProvider:nil];
-    
-    NSString* oauthToken = requestToken.key;
-    OARequestParameter* oauthTokenParam = [[OARequestParameter alloc] initWithName:@"oauth_token" value:oauthToken] ;
-    [authorizeRequest setParameters:[NSArray arrayWithObject:oauthTokenParam]];
-    //  UIWebView* webView = [[UIWebView alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    //  webView.scalesPageToFit = YES;
-    //  [[[UIApplication sharedApplication] keyWindow] addSubview:webView];
-    webview.delegate = self;
-    [webview loadRequest:authorizeRequest];
-    
-}
-
-#pragma mark UIWebViewDelegate
-
-- (BOOL)webView:(UIWebView*)webView shouldStartLoadWithRequest:(NSURLRequest*)request navigationType:(UIWebViewNavigationType)navigationType {
-    
-    if ([[[request URL] scheme] isEqualToString:@"vimeo"]) {
-        // Extract oauth_verifier from URL query
-        NSString* verifier = nil;
-        NSArray* urlParams = [[[request URL] query] componentsSeparatedByString:@"&"];
-        NSLog(@"the result is:\n %@", urlParams);
-        for (NSString* param in urlParams) {
-            NSArray* keyValue = [param componentsSeparatedByString:@"="];
-            NSString* key = [keyValue objectAtIndex:0];
-            if ([key isEqualToString:@"oauth_verifier"]) {
-                verifier = [keyValue objectAtIndex:1];
-                break;
-            }
-        }
-        if (verifier) {
-            NSURL* accessTokenUrl = [NSURL URLWithString:@"https://vimeo.com/oauth/access_token"];
-            OAMutableURLRequest* accessTokenRequest = [[OAMutableURLRequest alloc] initWithURL:accessTokenUrl
-                                                                                      consumer:consumer
-                                                                                         token:requestToken
-                                                                                         realm:nil
-                                                                             signatureProvider:nil];
-            
-            OARequestParameter* verifierParam = [[OARequestParameter alloc] initWithName:@"oauth_verifier" value:verifier];
-            [accessTokenRequest setHTTPMethod:@"POST"];
-            [accessTokenRequest setParameters:[NSArray arrayWithObject:verifierParam]];
-            OADataFetcher* dataFetcher = [[OADataFetcher alloc] init];
-            [dataFetcher fetchDataWithRequest:accessTokenRequest
-                                     delegate:self
-                            didFinishSelector:@selector(didReceiveAccessToken:data:)
-                            didFailSelector:@selector(didFailOAuth:error:)];
-        } else {
-            // ERROR!
-            
-        }
-        [webView removeFromSuperview];
-        return NO;
+    NSHTTPURLResponse   *response = nil;
+    NSError         *error = nil;
+    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    SBJsonParser *jResponse = [[SBJsonParser alloc]init];
+    NSDictionary *tokenData = [jResponse objectWithString:result];
+    NSArray*keys=[tokenData allKeys];
+    NSLog(@"RESULT: %@",keys);
+    NSLog(@"\n\n %i", [[tokenData objectForKey: @"data"] count]);
+    totalVideo = [[tokenData objectForKey: @"total"] integerValue];
+    if (totalVideo % 25 > 0) {
+        pageNum = totalVideo/25 + 1;
     }
+    
+    [self buildRawDataArray];
+}
+
+- (void)buildRawDataArray
+{
+    // turn on the network indicator
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    
+    for (int i = 0; i < pageNum; i++) {
+        NSString *url = [NSString stringWithFormat:@"https://api.vimeo.com/me/videos?page=%i", i+1];
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+        [request setHTTPMethod:@"GET"];
+        [request setValue:@"bearer 6bdf3f21e6319a1e2e55b35dac8654f5" forHTTPHeaderField:@"Authorization"];
+        NSHTTPURLResponse   *response = nil;
+        NSError         *error = nil;
+        NSData *pageData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+        NSString *result = [[NSString alloc] initWithData:pageData encoding:NSUTF8StringEncoding];
+        SBJsonParser *jResponse = [[SBJsonParser alloc]init];
+        NSDictionary *tokenData = [jResponse objectWithString:result];
+        NSArray *arr_pageData = [NSArray arrayWithArray:[tokenData objectForKey:@"data"]];
+        for (int j = 0; j < arr_pageData.count; j++) {
+            [arr_rawData addObject: arr_pageData[j]];
+        }
+    }
+    
+//    NSLog(@"The total item num is %@", arr_rawData[5]);
+
+    // turn off the network indicator
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
+#pragma mark - Collection Delegate Methods
+-(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return arr_rawData.count;
+}
+
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
+                 cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    UICollectionViewCell *galleryImageCell = [collectionView
+                                       dequeueReusableCellWithReuseIdentifier:@"theCell" forIndexPath:indexPath];
+    
+    NSDictionary *picture = [[arr_rawData objectAtIndex:indexPath.item] objectForKey:@"pictures"];
+    NSArray *size = [picture objectForKey:@"sizes"];
+    NSDictionary *theImage = [size objectAtIndex:2];
+    NSString *link = [theImage objectForKey:@"link"];
+    UIImage *thumbImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:link]]];
+    UIImageView *thumbUiiv = [[UIImageView alloc] initWithImage:thumbImage];
+    thumbUiiv.frame = galleryImageCell.bounds;
+    [galleryImageCell addSubview: thumbUiiv];
+    return galleryImageCell;
+}
+
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *theLink = [[arr_rawData objectAtIndex: indexPath.item] objectForKey:@"link"];
+    [webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:theLink]]];
+//    webview.hidden = NO;
+}
+
+- (void)loadPlayerWeb
+{
+    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    xhWebViewController *vc = (xhWebViewController*)[mainStoryboard instantiateViewControllerWithIdentifier:@"xhWebViewController"];
+    [vc socialButton:video_src];
+    vc.view.frame = self.view.bounds;
+    [self presentViewController:vc animated:YES completion:nil];
+}
+
+#pragma mark - WebView Delegate Methods
+
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+//    NSLog(@"Loading: %@", [request URL]);
     return YES;
 }
 
 
-- (void)didReceiveAccessToken:(OAServiceTicket*)ticket data:(NSData*)data {
-
-    NSString* httpBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    accessToken = [[OAToken alloc] initWithHTTPResponseBody:httpBody];
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+//    NSLog(@"didFinish: %@; stillLoading: %@", [[webView request]URL],
+//          (webView.loading?@"YES":@"NO"));
+    if (webview.loading) {
+        // turn on the network indicator
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    }
     
-    NSLog(@"The response is %@", accessToken);
-    
-//    NSString *OAuthKey = accessToken.key;    // HERE YOU WILL GET ACCESS TOKEN
-//    NSString *OAuthSecret = accessToken.secret;  //HERE  YOU WILL GET SECRET TOKEN
-//    secrete = [NSString stringWithString:OAuthSecret];
-//    UIAlertView *alertView = [[UIAlertView alloc]
-//                              initWithTitle:@"Vimeo TOken"
-//                              message:OAuthKey
-//                              delegate:nil
-//                              cancelButtonTitle:@"OK"
-//                              otherButtonTitles:nil];
-//    [alertView show];
-    
-//    webview.hidden = YES;
-//    [self sendAPIRequist];
+    else {
+        
+        // turn off the network indicator
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        
+        NSString *html = [webView stringByEvaluatingJavaScriptFromString: @"document.querySelector('div.flideo > video').src;"];
+        NSLog(@"the link is \n %@", html);
+        if (html) {
+            video_src = nil;
+            video_src = [[NSString alloc] initWithString:html];
+            [self loadPlayerWeb];
+        }
+    }
 }
 
-- (void)sendAPIRequist
-{
-    NSURL *url = [NSURL URLWithString:@"https://api.vimeo.com/me/videos"];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    [request addValue:@"Authorization: bearer 8615512ccc84238fe73bd298f2df935a"forHTTPHeaderField:@"https://api.vimeo.com"];
-    
-    NSURLResponse *response;
-    NSError *error;
-    //send it synchronous
-    NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    NSString *responseString = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
-    // check for an error. If there is a network error, you should handle it here.
-    if(!error)
-    {
-        //log response
-        NSLog(@"Response from server = %@", responseString);
-    }
-    NSLog(@"\nThe Data is:\n\n %@", responseString);
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+//    NSLog(@"didFail: %@; stillLoading: %@", [[webView request]URL],
+//          (webView.loading?@"YES":@"NO"));
 }
 
 - (void)didReceiveMemoryWarning {

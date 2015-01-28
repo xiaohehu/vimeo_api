@@ -13,7 +13,7 @@
 @end
 
 @implementation AppDelegate
-
+@synthesize isWirelessAvailable, internetReachable, hostReachable;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
@@ -40,6 +40,82 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+#pragma mark Web Check
+//////////////////////////
+// Webcheck when loaded //
+//////////////////////////
+//
+- (void) checkNetworkStatus:(NSNotification *)notice
+{
+    // called after network status changes
+    
+    NetworkStatus internetStatus = [internetReachable currentReachabilityStatus];
+    switch (internetStatus)
+    
+    {
+        case NotReachable:
+        {
+            //NSLog(@"The internet is down.");
+            internetActive = NO;
+            isWirelessAvailable = @"NO";
+            break;
+            
+        }
+        case ReachableViaWiFi:
+        {
+            //NSLog(@"The internet is working via WIFI.");
+            //	self.internetActive = YES;
+            internetActive = YES;
+            isWirelessAvailable = @"YES";
+            break;
+            
+        }
+        case ReachableViaWWAN:
+        {
+            //NSLog(@"The internet is working via WWAN.");
+            //	self.internetActive = YES;
+            internetActive = YES;
+            isWirelessAvailable = @"YES";
+            break;
+        }
+    }
+    
+    NetworkStatus hostStatus = [hostReachable currentReachabilityStatus];
+    switch (hostStatus)
+    
+    {
+        case NotReachable:
+        {
+            //NSLog(@"A gateway to the host server is down.");
+            internetActive = NO;
+            isWirelessAvailable = @"NO";
+            break;
+            
+        }
+        case ReachableViaWiFi:
+        {
+            //NSLog(@"A gateway to the host server is working via WIFI.");
+            internetActive = YES;
+            isWirelessAvailable = @"YES";
+            break;
+            
+        }
+        case ReachableViaWWAN:
+        {
+            //NSLog(@"A gateway to the host server is working via WWAN.");
+            internetActive = YES;
+            isWirelessAvailable = @"YES";
+            break;
+            
+        }
+    }
+}
+
++ (AppDelegate *)appDelegate
+{
+    AppDelegate *theDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    return theDelegate;
 }
 
 @end
