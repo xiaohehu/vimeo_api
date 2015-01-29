@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "xhWebViewController.h"
+#import "galleryCell.h"
 
 @interface ViewController ()<UICollectionViewDelegate, UICollectionViewDataSource, UIWebViewDelegate>
 {
@@ -35,7 +36,7 @@
     
     theCollectionView.delegate = self;
     theCollectionView.dataSource = self;
-    [theCollectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"theCell"];
+    [theCollectionView registerClass:[galleryCell class] forCellWithReuseIdentifier:@"theCell"];
     [theCollectionView reloadData];
 }
 
@@ -112,17 +113,16 @@
 {
     UICollectionViewCell *galleryImageCell = [collectionView
                                        dequeueReusableCellWithReuseIdentifier:@"theCell" forIndexPath:indexPath];
+
+    NSDictionary *picture = [[arr_rawData objectAtIndex:indexPath.item] objectForKey:@"pictures"];
+    NSArray *size = [picture objectForKey:@"sizes"];
+    NSDictionary *theImage = [size objectAtIndex:0];
+    NSString *link = [theImage objectForKey:@"link"];
+    UIImage *thumbImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:link]]];
+    UIImageView *thumbUiiv = [[UIImageView alloc] initWithImage:thumbImage];
+    thumbUiiv.frame = galleryImageCell.bounds;
+    [galleryImageCell addSubview: thumbUiiv];
     
-    if (!galleryImageCell) {
-        galleryImageCell = [[UICollectionViewCell alloc] init];
-        NSDictionary *picture = [[arr_rawData objectAtIndex:indexPath.item] objectForKey:@"pictures"];
-        NSArray *size = [picture objectForKey:@"sizes"];
-        NSDictionary *theImage = [size objectAtIndex:0];
-        NSString *link = [theImage objectForKey:@"link"];
-        UIImage *thumbImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:link]]];
-        UIImageView *thumbUiiv = [[UIImageView alloc] initWithImage:thumbImage];
-        thumbUiiv.frame = galleryImageCell.bounds;
-    }
     return galleryImageCell;
 }
 

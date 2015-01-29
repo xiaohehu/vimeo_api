@@ -12,6 +12,7 @@
 		820C6FA31A798A7F005D53BB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 820C6FA21A798A7F005D53BB /* CoreGraphics.framework */; };
 		820C6FA81A798B83005D53BB /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 820C6FA51A798B83005D53BB /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		820C6FA91A798B83005D53BB /* xhWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 820C6FA71A798B83005D53BB /* xhWebViewController.m */; };
+		820C735C1A7A80A600B1E550 /* galleryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 820C735B1A7A80A600B1E550 /* galleryCell.m */; };
 		822E8A641A768A1500DFE73C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 822E8A631A768A1500DFE73C /* main.m */; };
 		822E8A671A768A1500DFE73C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 822E8A661A768A1500DFE73C /* AppDelegate.m */; };
 		822E8A6A1A768A1500DFE73C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 822E8A691A768A1500DFE73C /* ViewController.m */; };
@@ -44,6 +45,8 @@
 		820C6FA51A798B83005D53BB /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		820C6FA61A798B83005D53BB /* xhWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xhWebViewController.h; sourceTree = "<group>"; };
 		820C6FA71A798B83005D53BB /* xhWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = xhWebViewController.m; sourceTree = "<group>"; };
+		820C735A1A7A80A600B1E550 /* galleryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = galleryCell.h; sourceTree = "<group>"; };
+		820C735B1A7A80A600B1E550 /* galleryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = galleryCell.m; sourceTree = "<group>"; };
 		822E8A5E1A768A1500DFE73C /* vimeo_test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = vimeo_test.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		822E8A621A768A1500DFE73C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		822E8A631A768A1500DFE73C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -124,6 +127,8 @@
 				820C6FA51A798B83005D53BB /* Reachability.m */,
 				820C6FA61A798B83005D53BB /* xhWebViewController.h */,
 				820C6FA71A798B83005D53BB /* xhWebViewController.m */,
+				820C735A1A7A80A600B1E550 /* galleryCell.h */,
+				820C735B1A7A80A600B1E550 /* galleryCell.m */,
 				822E8A871A768A7900DFE73C /* JSON */,
 				822E8A6E1A768A1500DFE73C /* Images.xcassets */,
 				822E8A701A768A1500DFE73C /* LaunchScreen.xib */,
@@ -288,6 +293,7 @@
 				822E8A981A768A7900DFE73C /* NSString+SBJSON.m in Sources */,
 				822E8A991A768A7900DFE73C /* SBJsonBase.m in Sources */,
 				822E8A6A1A768A1500DFE73C /* ViewController.m in Sources */,
+				820C735C1A7A80A600B1E550 /* galleryCell.m in Sources */,
 				822E8A671A768A1500DFE73C /* AppDelegate.m in Sources */,
 				822E8A9B1A768A7900DFE73C /* SBJsonWriter.m in Sources */,
 				822E8A971A768A7900DFE73C /* NSObject+SBJSON.m in Sources */,
@@ -418,6 +424,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = vimeo_test/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -428,6 +435,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = vimeo_test/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
