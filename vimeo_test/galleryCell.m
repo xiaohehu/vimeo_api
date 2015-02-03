@@ -9,7 +9,7 @@
 #import "galleryCell.h"
 
 @implementation galleryCell
-@synthesize cellThumb;
+@synthesize cellThumb = _cellThumb;
 
 - (id)initWithFrame:(CGRect)frame
 {

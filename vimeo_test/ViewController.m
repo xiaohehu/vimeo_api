@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import "xhWebViewController.h"
 #import "galleryCell.h"
+#import <MediaPlayer/MediaPlayer.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 
 @interface ViewController ()<UICollectionViewDelegate, UICollectionViewDataSource, UIWebViewDelegate>
 {
@@ -19,6 +21,8 @@
     __weak IBOutlet UIWebView *webview;
     __weak IBOutlet UICollectionView *theCollectionView;
 }
+@property (nonatomic, strong) MPMoviePlayerViewController       *playerViewController;
+
 @end
 
 @implementation ViewController
@@ -33,10 +37,18 @@
     webview.hidden = YES;
     
     [self authorizeVimeo];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
     
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [theCollectionView registerClass:[galleryCell class] forCellWithReuseIdentifier:@"theCell"];
     theCollectionView.delegate = self;
     theCollectionView.dataSource = self;
-    [theCollectionView registerClass:[galleryCell class] forCellWithReuseIdentifier:@"theCell"];
     [theCollectionView reloadData];
 }
 
@@ -103,25 +115,35 @@
 }
 
 #pragma mark - Collection Delegate Methods
+
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     return arr_rawData.count;
 }
 
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
+    return 1;
+}
+
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
                  cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    UICollectionViewCell *galleryImageCell = [collectionView
+    galleryCell *galleryImageCell = [collectionView
                                        dequeueReusableCellWithReuseIdentifier:@"theCell" forIndexPath:indexPath];
 
     NSDictionary *picture = [[arr_rawData objectAtIndex:indexPath.item] objectForKey:@"pictures"];
     NSArray *size = [picture objectForKey:@"sizes"];
     NSDictionary *theImage = [size objectAtIndex:0];
     NSString *link = [theImage objectForKey:@"link"];
-    UIImage *thumbImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:link]]];
-    UIImageView *thumbUiiv = [[UIImageView alloc] initWithImage:thumbImage];
-    thumbUiiv.frame = galleryImageCell.bounds;
-    [galleryImageCell addSubview: thumbUiiv];
+//    UIImage *thumbImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:link]]];
+//    UIImageView *thumbUiiv = [[UIImageView alloc] initWithImage:thumbImage];
+//    thumbUiiv.frame = galleryImageCell.bounds;
+//    [galleryImageCell addSubview: thumbUiiv];
+//    galleryImageCell.cellThumb.image = thumbImage;
+    
+    [galleryImageCell.cellThumb sd_setImageWithURL:[NSURL URLWithString:link]
+                   placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
     
     return galleryImageCell;
 }
@@ -130,7 +152,7 @@
 {
     NSString *theLink = [[arr_rawData objectAtIndex: indexPath.item] objectForKey:@"link"];
     [webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:theLink]]];
-    NSLog(@"the link is \n%@", theLink);
+//    NSLog(@"the link is \n%@", theLink);
 //    webview.hidden = NO;
 }
 
@@ -164,12 +186,21 @@
         // turn off the network indicator
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         
-        NSString *html = [webView stringByEvaluatingJavaScriptFromString: @"document.querySelector('div.flideo > video').src;"];
+        //NSString *html = [webView stringByEvaluatingJavaScriptFromString: @"document.querySelector('div.cloaked > video').src;"];
+        NSString *html = [webView stringByEvaluatingJavaScriptFromString: @"document.querySelector('div.flideo').innerHTML;"];
         NSLog(@"the link is \n %@", html);
         if (html) {
             video_src = nil;
             video_src = [[NSString alloc] initWithString:html];
-            [self loadPlayerWeb];
+//            [self loadPlayerWeb];
+            _playerViewController = [[MPMoviePlayerViewController alloc] initWithContentURL:[NSURL fileURLWithPath:video_src]];
+            _playerViewController.view.frame = self.view.bounds;//CGRectMake(0, 0, 1024, 768);
+            _playerViewController.view.alpha=1.0;
+            _playerViewController.moviePlayer.controlStyle = MPMovieControlStyleNone;
+            [_playerViewController.moviePlayer setAllowsAirPlay:YES];
+            _playerViewController.moviePlayer.repeatMode = MPMovieRepeatModeOne;
+            [_playerViewController.moviePlayer play];
+            [self.view addSubview: _playerViewController.view];
         }
     }
 }

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface galleryCell : UICollectionViewCell
+
 @property (strong, nonatomic) IBOutlet UIImageView *cellThumb;
 
 @end
