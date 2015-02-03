@@ -74,7 +74,17 @@
     op.responseSerializer = [AFJSONResponseSerializer serializer];
     op.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/vnd.vimeo.video+json"];
     [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"JSON: %@", responseObject);
+//        NSLog(@"JSON: %@", responseObject);
+        
+        totalVideo = [[responseObject objectForKey: @"total"] integerValue];
+        if (totalVideo % 25 > 0) {
+            pageNum = totalVideo/25 + 1;
+        }
+        
+        [self buildRawDataArray];
+        [theCollectionView reloadData];
+
+        
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
     }];
