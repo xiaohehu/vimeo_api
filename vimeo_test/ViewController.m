@@ -129,8 +129,11 @@
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
                  cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    galleryCell *galleryImageCell = [collectionView
-                                       dequeueReusableCellWithReuseIdentifier:@"theCell" forIndexPath:indexPath];
+//    galleryCell *galleryImageCell = [collectionView
+//                                       dequeueReusableCellWithReuseIdentifier:@"theCell" forIndexPath:indexPath];
+    UICollectionViewCell *galleryImageCell = [collectionView
+                                     dequeueReusableCellWithReuseIdentifier:@"theCell" forIndexPath:indexPath];
+
 
     NSDictionary *picture = [[arr_rawData objectAtIndex:indexPath.item] objectForKey:@"pictures"];
     NSArray *size = [picture objectForKey:@"sizes"];
@@ -139,11 +142,13 @@
 //    UIImage *thumbImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:link]]];
 //    UIImageView *thumbUiiv = [[UIImageView alloc] initWithImage:thumbImage];
 //    thumbUiiv.frame = galleryImageCell.bounds;
-//    [galleryImageCell addSubview: thumbUiiv];
+    UIImageView *thumbUiiv = [[UIImageView alloc] initWithFrame:galleryImageCell.bounds];
+    [thumbUiiv sd_setImageWithURL:[NSURL URLWithString:link] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+    [galleryImageCell addSubview: thumbUiiv];
 //    galleryImageCell.cellThumb.image = thumbImage;
     
-    [galleryImageCell.cellThumb sd_setImageWithURL:[NSURL URLWithString:link]
-                   placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+//    [galleryImageCell.cellThumb sd_setImageWithURL:[NSURL URLWithString:link]
+//                   placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
     
     return galleryImageCell;
 }
