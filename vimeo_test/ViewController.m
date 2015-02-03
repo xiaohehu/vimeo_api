@@ -11,6 +11,7 @@
 #import "galleryCell.h"
 #import <MediaPlayer/MediaPlayer.h>
 #import <SDWebImage/UIImageView+WebCache.h>
+#import "AFNetworking.h"
 
 @interface ViewController ()<UICollectionViewDelegate, UICollectionViewDataSource, UIWebViewDelegate>
 {
@@ -36,6 +37,11 @@
     webview.delegate = self;
     webview.hidden = YES;
     
+    [theCollectionView registerClass:[galleryCell class] forCellWithReuseIdentifier:@"theCell"];
+    theCollectionView.delegate = self;
+    theCollectionView.dataSource = self;
+    [theCollectionView reloadData];
+    
     [self authorizeVimeo];
 }
 
@@ -46,10 +52,6 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    [theCollectionView registerClass:[galleryCell class] forCellWithReuseIdentifier:@"theCell"];
-    theCollectionView.delegate = self;
-    theCollectionView.dataSource = self;
-    [theCollectionView reloadData];
 }
 
 - (void)authorizeVimeo{
@@ -58,32 +60,43 @@
     
     // set the URL
     NSURL *url = [NSURL URLWithString:@"https://api.vimeo.com/me/videos"];
-    
     //set up the request to be sent
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     [request setURL:url];
-    [request setHTTPMethod:@"GET"];
+//    [request setHTTPMethod:@"GET"];
     [request setValue:@"bearer 6bdf3f21e6319a1e2e55b35dac8654f5" forHTTPHeaderField:@"Authorization"];
 //    [request setTimeoutInterval:30];
     
     // turn on the network indicator
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
-    NSHTTPURLResponse   *response = nil;
-    NSError         *error = nil;
-    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    SBJsonParser *jResponse = [[SBJsonParser alloc]init];
-    NSDictionary *tokenData = [jResponse objectWithString:result];
-    NSArray*keys=[tokenData allKeys];
-    NSLog(@"RESULT: %@",keys);
-    NSLog(@"\n\n %i", [[tokenData objectForKey: @"data"] count]);
-    totalVideo = [[tokenData objectForKey: @"total"] integerValue];
-    if (totalVideo % 25 > 0) {
-        pageNum = totalVideo/25 + 1;
-    }
+    AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    op.responseSerializer = [AFJSONResponseSerializer serializer];
+    op.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/vnd.vimeo.video+json"];
+    [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"JSON: %@", responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+    [[NSOperationQueue mainQueue] addOperation:op];
     
-    [self buildRawDataArray];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+//    NSHTTPURLResponse   *response = nil;
+//    NSError         *error = nil;
+//    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+//    NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+//    SBJsonParser *jResponse = [[SBJsonParser alloc]init];
+//    NSDictionary *tokenData = [jResponse objectWithString:result];
+//    NSArray*keys=[tokenData allKeys];
+//    NSLog(@"RESULT: %@",keys);
+//    NSLog(@"\n\n %i", [[tokenData objectForKey: @"data"] count]);
+//    totalVideo = [[tokenData objectForKey: @"total"] integerValue];
+//    if (totalVideo % 25 > 0) {
+//        pageNum = totalVideo/25 + 1;
+//    }
+//    
+//    [self buildRawDataArray];
+//    [theCollectionView reloadData];
 }
 
 - (void)buildRawDataArray
@@ -197,15 +210,15 @@
         if (html) {
             video_src = nil;
             video_src = [[NSString alloc] initWithString:html];
-//            [self loadPlayerWeb];
-            _playerViewController = [[MPMoviePlayerViewController alloc] initWithContentURL:[NSURL fileURLWithPath:video_src]];
-            _playerViewController.view.frame = self.view.bounds;//CGRectMake(0, 0, 1024, 768);
-            _playerViewController.view.alpha=1.0;
-            _playerViewController.moviePlayer.controlStyle = MPMovieControlStyleNone;
-            [_playerViewController.moviePlayer setAllowsAirPlay:YES];
-            _playerViewController.moviePlayer.repeatMode = MPMovieRepeatModeOne;
-            [_playerViewController.moviePlayer play];
-            [self.view addSubview: _playerViewController.view];
+            [self loadPlayerWeb];
+//            _playerViewController = [[MPMoviePlayerViewController alloc] initWithContentURL:[NSURL fileURLWithPath:video_src]];
+//            _playerViewController.view.frame = self.view.bounds;//CGRectMake(0, 0, 1024, 768);
+//            _playerViewController.view.alpha=1.0;
+//            _playerViewController.moviePlayer.controlStyle = MPMovieControlStyleNone;
+//            [_playerViewController.moviePlayer setAllowsAirPlay:YES];
+//            _playerViewController.moviePlayer.repeatMode = MPMovieRepeatModeOne;
+//            [_playerViewController.moviePlayer play];
+//            [self.view addSubview: _playerViewController.view];
         }
     }
 }
