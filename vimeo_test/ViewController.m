@@ -214,8 +214,8 @@
         // turn off the network indicator
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         
-        //NSString *html = [webView stringByEvaluatingJavaScriptFromString: @"document.querySelector('div.cloaked > video').src;"];
-        NSString *html = [webView stringByEvaluatingJavaScriptFromString: @"document.querySelector('div.flideo').innerHTML;"];
+        NSString *html = [webView stringByEvaluatingJavaScriptFromString: @"document.querySelector('div.cloaked > video').src;"];
+//        NSString *html = [webView stringByEvaluatingJavaScriptFromString: @"document.querySelector('div.flideo').innerHTML;"];
         NSLog(@"the link is \n %@", html);
         if (html) {
             video_src = nil;
