@@ -151,7 +151,7 @@
     
 	appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     
-    NSLog(@"Reading as %@", appDelegate.isWirelessAvailable);
+//    NSLog(@"Reading as %@", appDelegate.isWirelessAvailable);
     
     if ([appDelegate.isWirelessAvailable isEqualToString:@"NO"]) {
         NSLog(@"Wireless NO");

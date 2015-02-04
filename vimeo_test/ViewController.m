@@ -43,6 +43,8 @@
     [theCollectionView reloadData];
     
     [self authorizeVimeo];
+    
+//    NSDictionary *dictionary = NSDictionary.FromObjectAndKey(new NSString("Mozilla/5.0 (" + (UIDevice.CurrentDevice.Model.Contains("iPad") ? "iPad" : "iPhone" ) +  "; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A403 Safari/8536.25"), new NSString("UserAgent"));
 }
 
 - (void)viewWillAppear:(BOOL)animated
