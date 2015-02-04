@@ -10,7 +10,7 @@
 
 @implementation galleryCell
 @synthesize cellThumb = _cellThumb;
-
+@synthesize cellCaption = _cellCaption;
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];

@@ -265,6 +265,10 @@
 
 -(void)viewWillDisappear:(BOOL)animated {
 	[super viewWillDisappear:animated];
+    [webView removeFromSuperview];
+    webView = nil;
+    [activityIndicator removeFromSuperview];
+    activityIndicator = nil;
 }
 
 

@@ -11,5 +11,7 @@
 @interface galleryCell : UICollectionViewCell
 
 @property (strong, nonatomic) IBOutlet UIImageView *cellThumb;
+@property (weak, nonatomic) IBOutlet UILabel *cellCaption;
+
 
 @end

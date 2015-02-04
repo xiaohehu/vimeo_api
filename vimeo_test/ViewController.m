@@ -37,14 +37,12 @@
     webview.delegate = self;
     webview.hidden = YES;
     
-    [theCollectionView registerClass:[galleryCell class] forCellWithReuseIdentifier:@"theCell"];
+//    [theCollectionView registerClass:[galleryCell class] forCellWithReuseIdentifier:@"theCell"];
     theCollectionView.delegate = self;
     theCollectionView.dataSource = self;
     [theCollectionView reloadData];
     
     [self authorizeVimeo];
-    
-//    NSDictionary *dictionary = NSDictionary.FromObjectAndKey(new NSString("Mozilla/5.0 (" + (UIDevice.CurrentDevice.Model.Contains("iPad") ? "iPad" : "iPhone" ) +  "; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A403 Safari/8536.25"), new NSString("UserAgent"));
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -54,6 +52,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
+
 }
 
 - (void)authorizeVimeo{
@@ -67,7 +66,6 @@
     [request setURL:url];
 //    [request setHTTPMethod:@"GET"];
     [request setValue:@"bearer 6bdf3f21e6319a1e2e55b35dac8654f5" forHTTPHeaderField:@"Authorization"];
-//    [request setTimeoutInterval:30];
     
     // turn on the network indicator
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
@@ -77,7 +75,6 @@
     op.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/vnd.vimeo.video+json"];
     [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
 //        NSLog(@"JSON: %@", responseObject);
-        
         totalVideo = [[responseObject objectForKey: @"total"] integerValue];
         if (totalVideo % 25 > 0) {
             pageNum = totalVideo/25 + 1;
@@ -86,7 +83,6 @@
         [self buildRawDataArray];
         [theCollectionView reloadData];
 
-        
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
     }];
@@ -125,9 +121,6 @@
         }];
         [[NSOperationQueue mainQueue] addOperation:op];
     }
-
-    // turn off the network indicator
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 #pragma mark - Collection Delegate Methods
@@ -145,26 +138,26 @@
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
                  cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-//    galleryCell *galleryImageCell = [collectionView
-//                                       dequeueReusableCellWithReuseIdentifier:@"theCell" forIndexPath:indexPath];
-    UICollectionViewCell *galleryImageCell = [collectionView
-                                     dequeueReusableCellWithReuseIdentifier:@"theCell" forIndexPath:indexPath];
+    galleryCell *galleryImageCell = [collectionView
+                                       dequeueReusableCellWithReuseIdentifier:@"theCell" forIndexPath:indexPath];
+//    UICollectionViewCell *galleryImageCell = [collectionView
+//                                     dequeueReusableCellWithReuseIdentifier:@"theCell" forIndexPath:indexPath];
 
 
     NSDictionary *picture = [[arr_rawData objectAtIndex:indexPath.item] objectForKey:@"pictures"];
     NSArray *size = [picture objectForKey:@"sizes"];
     NSDictionary *theImage = [size objectAtIndex:0];
     NSString *link = [theImage objectForKey:@"link"];
-//    UIImage *thumbImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:link]]];
-//    UIImageView *thumbUiiv = [[UIImageView alloc] initWithImage:thumbImage];
-//    thumbUiiv.frame = galleryImageCell.bounds;
-    UIImageView *thumbUiiv = [[UIImageView alloc] initWithFrame:galleryImageCell.bounds];
-    [thumbUiiv sd_setImageWithURL:[NSURL URLWithString:link] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
-    [galleryImageCell addSubview: thumbUiiv];
-//    galleryImageCell.cellThumb.image = thumbImage;
+
+    NSString *caption = [[arr_rawData objectAtIndex:indexPath.item] objectForKey:@"name"];
+    galleryImageCell.cellCaption.text = caption;
+//    UIImageView *thumbUiiv = [[UIImageView alloc] initWithFrame:galleryImageCell.bounds];
+//    [thumbUiiv sd_setImageWithURL:[NSURL URLWithString:link] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+//    [galleryImageCell addSubview: thumbUiiv];
+
     
-//    [galleryImageCell.cellThumb sd_setImageWithURL:[NSURL URLWithString:link]
-//                   placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+    [galleryImageCell.cellThumb sd_setImageWithURL:[NSURL URLWithString:link]
+                   placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
     
     return galleryImageCell;
 }
@@ -214,22 +207,13 @@
             video_src = nil;
             video_src = [[NSString alloc] initWithString:html];
             [self loadPlayerWeb];
-//            _playerViewController = [[MPMoviePlayerViewController alloc] initWithContentURL:[NSURL fileURLWithPath:video_src]];
-//            _playerViewController.view.frame = self.view.bounds;//CGRectMake(0, 0, 1024, 768);
-//            _playerViewController.view.alpha=1.0;
-//            _playerViewController.moviePlayer.controlStyle = MPMovieControlStyleNone;
-//            [_playerViewController.moviePlayer setAllowsAirPlay:YES];
-//            _playerViewController.moviePlayer.repeatMode = MPMovieRepeatModeOne;
-//            [_playerViewController.moviePlayer play];
-//            [self.view addSubview: _playerViewController.view];
         }
     }
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-//    NSLog(@"didFail: %@; stillLoading: %@", [[webView request]URL],
-//          (webView.loading?@"YES":@"NO"));
+
 }
 
 - (void)didReceiveMemoryWarning {
