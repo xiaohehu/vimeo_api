@@ -35,6 +35,15 @@
 	webTitle.text = self.title;
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    self.view.frame = self.view.superview.bounds;
+    webView.frame = self.view.superview.bounds;
+}
+
+-(void) viewWillLayoutSubviews {
+    self.view.frame = self.view.superview.bounds;
+}
 
 -(void)openAndClose:(id)sender
 {

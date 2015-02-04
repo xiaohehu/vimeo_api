@@ -91,22 +91,6 @@
     [[NSOperationQueue mainQueue] addOperation:op];
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-//    NSHTTPURLResponse   *response = nil;
-//    NSError         *error = nil;
-//    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-//    NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-//    SBJsonParser *jResponse = [[SBJsonParser alloc]init];
-//    NSDictionary *tokenData = [jResponse objectWithString:result];
-//    NSArray*keys=[tokenData allKeys];
-//    NSLog(@"RESULT: %@",keys);
-//    NSLog(@"\n\n %i", [[tokenData objectForKey: @"data"] count]);
-//    totalVideo = [[tokenData objectForKey: @"total"] integerValue];
-//    if (totalVideo % 25 > 0) {
-//        pageNum = totalVideo/25 + 1;
-//    }
-//    
-//    [self buildRawDataArray];
-//    [theCollectionView reloadData];
 }
 
 - (void)buildRawDataArray
@@ -119,19 +103,26 @@
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
         [request setHTTPMethod:@"GET"];
         [request setValue:@"bearer 6bdf3f21e6319a1e2e55b35dac8654f5" forHTTPHeaderField:@"Authorization"];
-        NSHTTPURLResponse   *response = nil;
-        NSError         *error = nil;
-        NSData *pageData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-        NSString *result = [[NSString alloc] initWithData:pageData encoding:NSUTF8StringEncoding];
-        SBJsonParser *jResponse = [[SBJsonParser alloc]init];
-        NSDictionary *tokenData = [jResponse objectWithString:result];
-        NSArray *arr_pageData = [NSArray arrayWithArray:[tokenData objectForKey:@"data"]];
-        for (int j = 0; j < arr_pageData.count; j++) {
-            [arr_rawData addObject: arr_pageData[j]];
-        }
+        
+        AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        op.responseSerializer = [AFJSONResponseSerializer serializer];
+        op.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/vnd.vimeo.video+json"];
+        [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            
+            NSArray *arr_pageData = [NSArray arrayWithArray:[responseObject objectForKey:@"data"]];
+            for (int j = 0; j < arr_pageData.count; j++) {
+                [arr_rawData addObject: arr_pageData[j]];
+            }
+
+            [theCollectionView reloadData];
+            // turn off the network indicator
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+            
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Error: %@", error);
+        }];
+        [[NSOperationQueue mainQueue] addOperation:op];
     }
-    
-//    NSLog(@"The total item num is %@", arr_rawData[5]);
 
     // turn off the network indicator
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
@@ -231,6 +222,7 @@
 //            [self.view addSubview: _playerViewController.view];
         }
     }
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
